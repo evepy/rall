@@ -73,9 +73,6 @@ export function MainView({ userRole }: MainViewProps) {
         </h2>
         <div className="flex items-center space-x-2">
           <button className="text-sm text-blue-500">Filtrar</button>
-          <Button variant="primary" size="sm" onClick={handleSignIn}>
-            Sign in Farcaster
-          </Button>
         </div>
       </div>
 

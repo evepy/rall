@@ -24,10 +24,19 @@ import { Button } from "./components/DemoComponents";
 import { Icon } from "./components/DemoComponents";
 import { Onboarding } from './components/Onboarding';
 import { MainView } from './components/MainView';
+import { useAccount } from "wagmi";
 
 type UserRole = 'mentor' | 'learner';
 
 export default function App() {
+  const { address } = useAccount();
+  const handleShowAddress = useCallback(() => {
+    if (address) {
+      alert(`Mi dirección en Base: ${address}`);
+    } else {
+      alert("Por favor conecta tu wallet");
+    }
+  }, [address]);
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -173,14 +182,11 @@ export default function App() {
           <p className="text-center text-gray-600 max-w-sm">
             Conecta con mentores y aprendices en el mundo Web3. Comparte conocimiento y crece en comunidad.
           </p>
-          <button
-            onClick={() => setShowOnboarding(true)}
-            className="bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition-colors"
+          <Button
+            onClick={handleShowAddress}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
           >
-            Comenzar
-          </button>
-          <Button variant="primary" onClick={handleSignIn}>
-            Iniciar sesión con Farcaster
+            Ver dirección en Base
           </Button>
           {context?.user && (
             <div className="mt-4 flex items-center space-x-2">
