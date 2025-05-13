@@ -19,6 +19,9 @@ export function Providers(props: { children: ReactNode }) {
       }}
     >
       {props.children}
+      
     </MiniKitProvider>
   );
 }
+
+
