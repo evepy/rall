@@ -5,7 +5,6 @@ import {
   useAddFrame,
   useOpenUrl,
   useAuthenticate,
-  useViewProfile,
 } from "@coinbase/onchainkit/minikit";
 import {
   Name,
@@ -37,7 +36,6 @@ export default function App() {
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
   const { signIn } = useAuthenticate('https://rall-six.vercel.app');
-  const viewMyProfile = useViewProfile();
 
   useEffect(() => {
     if (!isFrameReady) {
@@ -66,9 +64,8 @@ export default function App() {
     const result = await signIn();
     if (result) {
       console.log('Authenticated:', result);
-      viewMyProfile();
     }
-  }, [signIn, viewMyProfile]);
+  }, [signIn]);
 
   const saveFrameButton = useMemo(() => {
     if (context && !context.client.added) {
@@ -185,9 +182,23 @@ export default function App() {
           <Button variant="primary" onClick={handleSignIn}>
             Iniciar sesión con Farcaster
           </Button>
-          <Button variant="secondary" size="sm" onClick={viewMyProfile}>
-            Ver mi perfil
-          </Button>
+          {context?.user && (
+            <div className="mt-4 flex items-center space-x-2">
+              {context.user.pfpUrl && (
+                <img
+                  src={context.user.pfpUrl}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full"
+                />
+              )}
+              <div>
+                <p className="font-semibold">
+                  {context.user.displayName ?? context.user.username}
+                </p>
+                <p className="text-xs text-gray-500">FID: {context.user.fid}</p>
+              </div>
+            </div>
+          )}
         </main>
 
         <footer className="mt-2 pt-4 flex justify-center">
