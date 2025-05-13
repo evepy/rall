@@ -4,6 +4,7 @@ import {
   useMiniKit,
   useAddFrame,
   useOpenUrl,
+  useAuthenticate,
 } from "@coinbase/onchainkit/minikit";
 import {
   Name,
@@ -34,6 +35,7 @@ export default function App() {
 
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
+  const { signIn } = useAuthenticate('https://rall-six.vercel.app');
 
   useEffect(() => {
     if (!isFrameReady) {
@@ -57,6 +59,13 @@ export default function App() {
     setUserRole(role);
     setShowOnboarding(false);
   };
+
+  const handleSignIn = useCallback(async () => {
+    const result = await signIn();
+    if (result) {
+      console.log('Authenticated:', result);
+    }
+  }, [signIn]);
 
   const saveFrameButton = useMemo(() => {
     if (context && !context.client.added) {
@@ -170,6 +179,9 @@ export default function App() {
           >
             Comenzar
           </button>
+          <Button variant="primary" onClick={handleSignIn}>
+            Iniciar sesión con Farcaster
+          </Button>
         </main>
 
         <footer className="mt-2 pt-4 flex justify-center">

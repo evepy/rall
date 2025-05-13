@@ -1,6 +1,9 @@
 import { MentorCard } from './MentorCard';
 import { LearnerCard } from './LearnerCard';
 import { Progress } from './Progress';
+import { useCallback } from 'react';
+import { Button } from './DemoComponents';
+import { useAuthenticate } from '@coinbase/onchainkit/minikit';
 
 // Datos de ejemplo
 const MOCK_MENTORS = [
@@ -56,13 +59,24 @@ interface MainViewProps {
 }
 
 export function MainView({ userRole }: MainViewProps) {
+  const { signIn } = useAuthenticate('https://rall-six.vercel.app');
+  const handleSignIn = useCallback(async () => {
+    const result = await signIn();
+    if (result) console.log('Authenticated:', result);
+  }, [signIn]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">
           {userRole === 'mentor' ? 'Aprendices Interesados' : 'Mentores Disponibles'}
         </h2>
-        <button className="text-sm text-blue-500">Filtrar</button>
+        <div className="flex items-center space-x-2">
+          <button className="text-sm text-blue-500">Filtrar</button>
+          <Button variant="primary" size="sm" onClick={handleSignIn}>
+            Sign in Farcaster
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
