@@ -4,29 +4,128 @@ import {
   useMiniKit,
   useAddFrame,
   useOpenUrl,
-  useAuthenticate,
+  useClose,
 } from "@coinbase/onchainkit/minikit";
 import {
-  Name,
-  Identity,
-  Address,
-  Avatar,
-  EthBalance,
+  // Name,
+  // Identity,
+  // Address,
+  // Avatar,
+  // EthBalance,
 } from "@coinbase/onchainkit/identity";
-import {
-  ConnectWallet,
-  Wallet,
-  WalletDropdown,
-  WalletDropdownDisconnect,
-} from "@coinbase/onchainkit/wallet";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "./components/DemoComponents";
 import { Icon } from "./components/DemoComponents";
-import { Onboarding } from './components/Onboarding';
 import { MainView } from './components/MainView';
 import { useAccount } from "wagmi";
 
+// Import the new Login and Role Selection screens
+import LoginScreen from './components/LoginScreen';
+import RoleSelectionScreen from './components/RoleSelectionScreen';
+import MentorProfileScreen from './components/MentorProfileScreen';
+import ApprenticeProfileScreen from './components/ApprenticeProfileScreen';
+import { Card } from "@/components/ui/card";
+import { MentorCard } from './components/MentorCard';
+import { ApprenticeCard } from './components/ApprenticeCard';
+import { ChatPreview } from './components/ChatPreview';
+import { ActivityView } from './components/ActivityView';
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'appkit-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
+type Section = 'mensajeria' | 'actividad';
 type UserRole = 'mentor' | 'learner';
+
+// Mock data - replace with real data later
+const MOCK_MENTORS = [
+  {
+    username: "@UserK_651651",
+    rating: 4.5,
+    expertise: ["Full-Stack", "UI Design", "Preparation"],
+    bio: "I'm Sofia, a passionate digital marketer with over a decade of experience driving growth in the exciting world of technology and startups. My specialty lies in unlocking the secrets of SEO, creating content that connects and designing marketing strategies that really make a difference.",
+    avatarUrl: "/path/to/avatar.jpg"
+  },
+  // Add more mock mentors...
+];
+
+const MOCK_APPRENTICES = [
+  {
+    username: "@UserK_651651",
+    level: "Beginner",
+    interests: ["React", "Web3", "DeFi"],
+    bio: "Passionate about blockchain technology and eager to learn from experienced mentors.",
+    avatarUrl: "/path/to/avatar.jpg"
+  },
+  // Add more mock apprentices...
+];
+
+// Mock data for chats and activity
+const mockChats = [
+  {
+    id: '1',
+    username: 'John Doe',
+    walletAddress: '0x1234...5678',
+    lastMessage: 'Hey, I would love to learn more about Web3 development!',
+    timestamp: '10:30 AM',
+    unreadCount: 2,
+  },
+  {
+    id: '2',
+    username: 'Alice Smith',
+    walletAddress: '0x9876...4321',
+    lastMessage: 'Thanks for the great mentoring session!',
+    timestamp: '9:45 AM',
+    unreadCount: 0,
+  },
+];
+
+const mockActivity = {
+  username: 'John Doe',
+  walletAddress: '0x1234...5678',
+  stats: {
+    mentoring: 15,
+    rating: 4.8,
+    reviews: 12,
+  },
+  badges: [
+    { id: '1', image: '/badges/mentor.png' },
+    { id: '2', image: '/badges/expert.png' },
+    { id: '3', image: '/badges/helpful.png' },
+    { id: '4', image: '/badges/innovative.png' },
+    { id: '5', image: '/badges/trusted.png' },
+    { id: '6', image: '/badges/leader.png' },
+  ],
+  reviews: [
+    {
+      username: 'Alice Smith',
+      walletAddress: '0x9876...4321',
+      text: 'Excellent mentor! Really helped me understand Web3 development concepts.',
+      date: '2 days ago',
+    },
+    {
+      username: 'Bob Johnson',
+      walletAddress: '0x5432...8765',
+      text: 'Great communication and very knowledgeable about smart contracts.',
+      date: '1 week ago',
+    },
+    {
+      username: 'Carol White',
+      walletAddress: '0x3456...7890',
+      text: 'Patient and thorough in explaining complex blockchain concepts.',
+      date: '2 weeks ago',
+    },
+  ],
+};
+
+const sectionLabels: Record<Section, string> = {
+  mensajeria: 'Mensajería',
+  actividad: 'Actividad',
+};
 
 export default function App() {
   const { address } = useAccount();
@@ -39,12 +138,23 @@ export default function App() {
   }, [address]);
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  // Track if profile has been configured for the user
+  const [profileConfigured, setProfileConfigured] = useState(false);
+
+  // State to track if the user has successfully logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [currentSection, setCurrentSection] = useState<Section>('mensajeria');
+  const [showRoleSelection, setShowRoleSelection] = useState(true);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [showNavDropdown, setShowNavDropdown] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
-  const { signIn } = useAuthenticate('https://rall-six.vercel.app');
+  const close = useClose();
 
   useEffect(() => {
     if (!isFrameReady) {
@@ -53,31 +163,55 @@ export default function App() {
   }, [setFrameReady, isFrameReady]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole') as UserRole;
-    if (role) {
-      setUserRole(role);
+    // Check for user role in localStorage on initial load AFTER login state is determined
+    if (isLoggedIn) {
+        const role = localStorage.getItem('userRole') as UserRole;
+        if (role) {
+          setUserRole(role);
+          // After role, check if profile config exists
+          const key = role === 'mentor' ? 'mentorProfile' : 'apprenticeProfile';
+          setProfileConfigured(!!localStorage.getItem(key));
+        } else {
+            // If logged in but no role, keep userRole as null to show role selection
+            setUserRole(null);
+        }
     }
-  }, []);
+  }, [isLoggedIn]); // Dependency on isLoggedIn
 
   const handleAddFrame = useCallback(async () => {
-    const frameAdded = await addFrame();
-    setFrameAdded(Boolean(frameAdded));
+    const frameAddedResult = await addFrame();
+    setFrameAdded(Boolean(frameAddedResult));
   }, [addFrame]);
 
-  const handleRoleSelect = (role: UserRole) => {
-    setUserRole(role);
-    setShowOnboarding(false);
+  // Function to handle successful login
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowRoleSelection(true);
   };
 
-  const handleSignIn = useCallback(async () => {
-    const result = await signIn();
-    if (result) {
-      console.log('Authenticated:', result);
+  // Function to handle role selection
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    setShowRoleSelection(false);
+    setCurrentSection('mensajeria');
+  };
+
+  // Navigation functions
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
     }
-  }, [signIn]);
+  };
+
+  const handleNext = () => {
+    const maxIndex = selectedRole === 'learner' ? MOCK_MENTORS.length - 1 : MOCK_APPRENTICES.length - 1;
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
 
   const saveFrameButton = useMemo(() => {
-    if (context && !context.client.added) {
+    if (context && context.client && !context.client.added) {
       return (
         <Button
           variant="ghost"
@@ -103,120 +237,104 @@ export default function App() {
     return null;
   }, [context, frameAdded, handleAddFrame]);
 
-  if (showOnboarding) {
-    return <Onboarding onRoleSelect={handleRoleSelect} />;
+  // --- Rendering Logic ---
+
+  // If not logged in, show login screen
+  if (!isLoggedIn) {
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
-  if (userRole) {
-    return (
-      <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
-        <div className="w-full max-w-md mx-auto px-4 py-3">
-          <header className="flex justify-between items-center mb-3 h-11">
-            <div>
-              <div className="flex items-center space-x-2">
-                <Wallet className="z-10">
-                  <ConnectWallet>
-                    <Name className="text-inherit" />
-                  </ConnectWallet>
-                  <WalletDropdown>
-                    <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-                      <Avatar />
-                      <Name />
-                      <Address />
-                      <EthBalance />
-                    </Identity>
-                    <WalletDropdownDisconnect />
-                  </WalletDropdown>
-                </Wallet>
-              </div>
-            </div>
-            <div>{saveFrameButton}</div>
-          </header>
-
-          <main className="flex-1">
-            <MainView userRole={userRole} />
-          </main>
-
-          <footer className="mt-2 pt-4 flex justify-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-[var(--ock-text-foreground-muted)] text-xs"
-              onClick={() => openUrl("https://base.org/builders/minikit")}
-            >
-              Built on Base with MiniKit
-            </Button>
-          </footer>
-        </div>
-      </div>
-    );
+  // If logged in but need to select role, show role selection
+  if (showRoleSelection) {
+    return <RoleSelectionScreen onRoleSelect={handleRoleSelect} />;
   }
+
+  // If logged in and role selected, but profile not configured, show profile form
+  if (isLoggedIn && userRole !== null && !profileConfigured) {
+    return userRole === 'mentor'
+      ? <MentorProfileScreen onSave={() => setProfileConfigured(true)} />
+      : <ApprenticeProfileScreen onSave={() => setProfileConfigured(true)} />;
+  }
+
+  const currentData = selectedRole === 'learner' ? MOCK_MENTORS : MOCK_APPRENTICES;
+  const sectionTitle = selectedRole === 'learner' ? 'Mentors' : 'Apprentices';
 
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
-      <div className="w-full max-w-md mx-auto px-4 py-3">
-        <header className="flex justify-between items-center mb-3 h-11">
-          <div>
-            <div className="flex items-center space-x-2">
-              <Wallet className="z-10">
-                <ConnectWallet>
-                  <Name className="text-inherit" />
-                </ConnectWallet>
-                <WalletDropdown>
-                  <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-                    <Avatar />
-                    <Name />
-                    <Address />
-                    <EthBalance />
-                  </Identity>
-                  <WalletDropdownDisconnect />
-                </WalletDropdown>
-              </Wallet>
-            </div>
+    <div className="min-h-screen bg-[#E2FF5C] p-4">
+      {/* Header with dropdown navigation */}
+      <div className="relative mb-8">
+        <button 
+          onClick={() => setShowNavDropdown(!showNavDropdown)}
+          className="w-full flex items-center justify-between p-4 bg-black text-white border-4 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+        >
+          <span className="text-xl font-bold">{sectionTitle} {currentSection}</span>
+          <span className="text-2xl">▼</span>
+        </button>
+
+        {/* Navigation dropdown */}
+        {showNavDropdown && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border-4 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10">
+            {(['mensajeria', 'actividad'] as Section[]).map((section) => (
+              <button
+                key={section}
+                onClick={() => {
+                  setCurrentSection(section);
+                  setShowNavDropdown(false);
+                }}
+                className={`w-full p-4 text-left hover:bg-[#E2FF5C] ${
+                  currentSection === section ? 'bg-[#E2FF5C]' : ''
+                }`}
+              >
+                {sectionLabels[section]}
+              </button>
+            ))}
           </div>
-          <div>{saveFrameButton}</div>
-        </header>
+        )}
+      </div>
 
-        <main className="flex-1 flex flex-col items-center justify-center space-y-6 py-12">
-          <h1 className="text-2xl font-bold text-center">Web3 Mentorship</h1>
-          <p className="text-center text-gray-600 max-w-sm">
-            Conecta con mentores y aprendices en el mundo Web3. Comparte conocimiento y crece en comunidad.
-          </p>
-          <Button
-            onClick={handleShowAddress}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
-          >
-            Ver dirección en Base
-          </Button>
-          {context?.user && (
-            <div className="mt-4 flex items-center space-x-2">
-              {context.user.pfpUrl && (
-                <img
-                  src={context.user.pfpUrl}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full"
-                />
-              )}
-              <div>
-                <p className="font-semibold">
-                  {context.user.displayName ?? context.user.username}
-                </p>
-                <p className="text-xs text-gray-500">FID: {context.user.fid}</p>
-              </div>
-            </div>
-          )}
-        </main>
+      {/* Content area */}
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        {/* Current card */}
+        {currentSection === 'mensajeria' && (
+          <div className="space-y-4">
+            {mockChats.map((chat) => (
+              <ChatPreview
+                key={chat.id}
+                id={chat.id}
+                username={chat.username}
+                walletAddress={chat.walletAddress}
+                lastMessage={chat.lastMessage}
+                timestamp={chat.timestamp}
+                unreadCount={chat.unreadCount}
+              />
+            ))}
+          </div>
+        )}
+        {currentSection === 'actividad' && (
+          <ActivityView {...mockActivity} />
+        )}
 
-        <footer className="mt-2 pt-4 flex justify-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-[var(--ock-text-foreground-muted)] text-xs"
-            onClick={() => openUrl("https://base.org/builders/minikit")}
-          >
-            Built on Base with MiniKit
-          </Button>
-        </footer>
+        {/* Navigation buttons */}
+        {currentSection === 'mensajeria' && (
+          <div className="flex justify-center space-x-8">
+            {currentIndex > 0 && (
+              <button
+                onClick={handlePrevious}
+                className="w-16 h-16 bg-white border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-2xl"
+              >
+                ←
+              </button>
+            )}
+            {currentIndex < currentData.length - 1 && (
+              <button
+                onClick={handleNext}
+                className="w-16 h-16 bg-white border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-2xl"
+              >
+                →
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

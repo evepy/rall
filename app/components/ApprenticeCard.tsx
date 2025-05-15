@@ -1,24 +1,24 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 
-interface MentorCardProps {
+interface ApprenticeCardProps {
   username: string;
-  rating: number;
-  expertise: string[];
+  level: string;
+  interests: string[];
   bio: string;
   avatarUrl?: string;
 }
 
-export const MentorCard: React.FC<MentorCardProps> = ({
+export const ApprenticeCard: React.FC<ApprenticeCardProps> = ({
   username,
-  rating,
-  expertise,
+  level,
+  interests,
   bio,
   avatarUrl
 }) => {
   return (
     <Card className="flex-shrink-0 w-72 p-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-      {/* Avatar and Rating */}
+      {/* Avatar and Level */}
       <div className="relative mb-4">
         <div className="w-full h-40 bg-gray-200 rounded-lg border-4 border-black overflow-hidden">
           {avatarUrl ? (
@@ -30,16 +30,16 @@ export const MentorCard: React.FC<MentorCardProps> = ({
           )}
         </div>
         <div className="absolute top-2 right-2 bg-white border-4 border-black rounded-full px-3 py-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          {rating} ★
+          {level}
         </div>
       </div>
 
       {/* Username */}
       <h3 className="text-xl font-bold mb-2">{username}</h3>
 
-      {/* Expertise Tags */}
+      {/* Interest Tags */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {expertise.map((tag, index) => (
+        {interests.map((tag, index) => (
           <span 
             key={index} 
             className="px-3 py-1 bg-[#E2FF5C] border-2 border-black rounded-full text-sm font-medium"

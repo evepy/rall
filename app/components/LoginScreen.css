@@ -1,0 +1,113 @@
+.login-screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh; /* Full viewport height */
+  /* background-color: #f0f0f0; Placeholder background */
+  /* Use absolute path for assets in public/ */
+  background-image: url('/background_pattern.png');
+  background-size: cover;
+  overflow: hidden; /* Hide overflowing scrolling text */
+  position: relative;
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1; /* Allow content to take up available space */
+  justify-content: center;
+  padding: 20px;
+  width: 100%; /* Take full width */
+  max-width: 500px; /* Limit content width on larger screens */
+  box-sizing: border-box;
+}
+
+.profile-section {
+  text-align: center;
+  margin-bottom: 30px; /* Increased space below profile */
+}
+
+.profile-section img {
+  width: 120px; /* Slightly larger profile image */
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 5px solid white; /* White border around image */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.profile-section p {
+    font-family: 'Comic Neue', cursive; /* Font for @devepy */
+    font-size: 1.1em;
+    color: #333; /* Darker text color */
+}
+
+.description-box {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px; /* Increased space below description */
+  text-align: center;
+  max-width: 400px; /* Adjust width as needed */
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+  font-family: 'Comic Neue', cursive; /* Font for description text */
+  line-height: 1.5;
+  color: #555; /* Slightly lighter text color */
+}
+
+.join-now-button {
+  background-color: #ffcc00; /* Yellow/Orange color from image */
+  color: black;
+  padding: 15px 40px; /* Larger padding */
+  border: none;
+  border-radius: 30px; /* More rounded corners */
+  font-size: 1.3em; /* Larger font size */
+  cursor: pointer;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4); /* More prominent shadow */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  font-family: 'PoetsenOne', sans-serif; /* Apply PoetsenOne font */
+  font-weight: normal; /* PoetsenOne is a display font, typically normal weight */
+}
+
+.join-now-button:hover {
+  background-color: #ffdb4d; /* Lighter shade on hover */
+}
+
+/* Scrolling text adjustments for Login Screen */
+.login-screen-container .scrolling-text-container:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+    padding: 5px 0; /* Add some vertical padding */
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif; /* Apply Orbitron font */
+    font-size: 0.9em;
+    color: #333;
+}
+
+.login-screen-container .scrolling-text-container:last-child {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+    padding: 5px 0; /* Add some vertical padding */
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif; /* Apply Orbitron font */
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* Adjust animation speeds or delays if needed */
+.login-screen-container .scrolling-text-container:first-child .scrolling-text {
+    animation: scroll-right 20s linear infinite; /* Adjusted speed */
+}
+
+.login-screen-container .scrolling-text-container:last-child .scrolling-text {
+    animation: scroll-left 15s linear infinite; /* Adjusted speed */
+} 

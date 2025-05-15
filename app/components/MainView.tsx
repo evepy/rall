@@ -4,6 +4,7 @@ import { Progress } from './Progress';
 import { useCallback } from 'react';
 import { Button } from './DemoComponents';
 import { useAuthenticate } from '@coinbase/onchainkit/minikit';
+import { useRouter } from 'next/navigation';
 
 // Datos de ejemplo
 const MOCK_MENTORS = [
@@ -65,6 +66,8 @@ export function MainView({ userRole }: MainViewProps) {
     if (result) console.log('Authenticated:', result);
   }, [signIn]);
 
+  const router = useRouter();
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -107,6 +110,14 @@ export function MainView({ userRole }: MainViewProps) {
           }
         ]}
       />
+
+      <Button
+        onClick={() => router.push('/reviews')}
+        variant="secondary"
+        size="md"
+      >
+        Ver Mis Reseñas
+      </Button>
     </div>
   );
 } 

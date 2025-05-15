@@ -1,0 +1,99 @@
+.role-selection-screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Align to the top */
+  min-height: 100vh; /* Use min-height to accommodate content */
+  /* background-color: #f0f0f0; Placeholder background */
+  /* Use existing background pattern from public/ */
+  background-image: url('/background_pattern.png');
+  background-size: cover;
+  padding: 20px;
+  box-sizing: border-box;
+  padding-bottom: 60px; /* Add padding at the bottom to prevent content from being hidden by fixed scrolling text */
+  position: relative; /* Needed for absolute positioning of scrolling text */
+}
+
+.mentor-section,
+.apprentice-section {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px; /* Space between sections and separator */
+  text-align: center;
+  max-width: 400px; /* Adjust width as needed */
+  width: 100%; /* Take full width within max-width */
+  cursor: pointer;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+  font-family: 'Comic Neue', cursive; /* Font for description text */
+  line-height: 1.5;
+  color: #555; /* Slightly lighter text color */
+  transition: background-color 0.3s ease;
+}
+
+.mentor-section:hover,
+.apprentice-section:hover {
+  background-color: rgba(255, 255, 255, 0.95); /* Less transparent on hover */
+}
+
+.mentor-section img,
+.apprentice-section img {
+  width: 100px; /* Adjust size as needed */
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px; /* Increased space below image */
+  border: 4px solid #ffcc00; /* Yellow/Orange border */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.mentor-section h2,
+.apprentice-section h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-family: 'PoetsenOne', sans-serif; /* Apply PoetsenOne font */
+  color: #333; /* Darker text color */
+}
+
+.separator {
+  margin-bottom: 20px; /* Space below separator */
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333; /* Darker text color */
+  font-family: 'PoetsenOne', sans-serif; /* Apply PoetsenOne font */
+}
+
+.additional-text-box {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 10px; /* Space above this box */
+  margin-bottom: 30px; /* Space before the scrolling text */
+  text-align: center;
+  max-width: 400px; /* Adjust width as needed */
+   width: 100%; /* Take full width within max-width */
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+   font-family: 'Comic Neue', cursive; /* Font for description text */
+  line-height: 1.5;
+  color: #555; /* Slightly lighter text color */
+}
+
+/* Adjustments for scrolling text at the bottom */
+.role-selection-screen-container .scrolling-text-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+    padding: 5px 0; /* Add some vertical padding */
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif; /* Apply Orbitron font */
+    font-size: 0.9em;
+    color: #333;
+    z-index: 10; /* Ensure it's above other content */
+}
+
+/* Ensure scrolling text animation is applied */
+.role-selection-screen-container .scrolling-text {
+     animation: scroll-left 15s linear infinite; /* Apply the left scroll animation */
+} 
