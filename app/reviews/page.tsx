@@ -35,20 +35,22 @@ const ReviewsPage = () => {
 
       try {
         // Fetch reviews where the author is a Mentor (Role 0)
+        // @ts-ignore
         const mentorReviews = await publicClient.readContract({
           address: contractMentorship,
           abi: contractMentorshipAbi,
           functionName: "getReviewsOf",
-          args: [getAddress(address), 0], // 0 for Role.Mentor
-        });
+          args: [getAddress(address), 0 as any], // 0 for Role.Mentor
+        }) as any[];
 
         // Fetch reviews where the author is a Mentee (Role 1)
+        // @ts-ignore
         const menteeReviews = await publicClient.readContract({
           address: contractMentorship,
           abi: contractMentorshipAbi,
           functionName: "getReviewsOf",
-          args: [getAddress(address), 1], // 1 for Role.Mentee
-        });
+          args: [getAddress(address), 1 as any], // 1 for Role.Mentee
+        }) as any[];
 
         // Combine and set reviews
         setReviews([...mentorReviews, ...menteeReviews]);
