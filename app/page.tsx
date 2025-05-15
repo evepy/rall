@@ -165,13 +165,13 @@ export default function App() {
   useEffect(() => {
     // Check for user role in localStorage on initial load AFTER login state is determined
     if (isLoggedIn) {
-        const role = localStorage.getItem('userRole') as UserRole;
-        if (role) {
-          setUserRole(role);
+    const role = localStorage.getItem('userRole') as UserRole;
+    if (role) {
+      setUserRole(role);
           // After role, check if profile config exists
           const key = role === 'mentor' ? 'mentorProfile' : 'apprenticeProfile';
           setProfileConfigured(!!localStorage.getItem(key));
-        } else {
+    } else {
             // If logged in but no role, keep userRole as null to show role selection
             setUserRole(null);
         }
@@ -259,7 +259,7 @@ export default function App() {
   const currentData = selectedRole === 'learner' ? MOCK_MENTORS : MOCK_APPRENTICES;
   const sectionTitle = selectedRole === 'learner' ? 'Mentors' : 'Apprentices';
 
-  return (
+    return (
     <div className="min-h-screen bg-[#E2FF5C] p-4">
       {/* Header with dropdown navigation */}
       <div className="relative mb-8">
@@ -288,8 +288,8 @@ export default function App() {
                 {sectionLabels[section]}
               </button>
             ))}
-          </div>
-        )}
+            </div>
+          )}
       </div>
 
       {/* Content area */}
@@ -326,15 +326,15 @@ export default function App() {
               </button>
             )}
             {currentIndex < currentData.length - 1 && (
-              <button
+            <button
                 onClick={handleNext}
                 className="w-16 h-16 bg-white border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-2xl"
-              >
+            >
                 →
-              </button>
+            </button>
             )}
-          </div>
-        )}
+            </div>
+          )}
       </div>
     </div>
   );

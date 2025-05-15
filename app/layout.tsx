@@ -46,7 +46,7 @@ export default function RootLayout({
       <body className="bg-background">
         <Navigation />
         <main>
-          <Providers>{children}</Providers>
+        <Providers>{children}</Providers>
         </main>
       </body>
     </html>

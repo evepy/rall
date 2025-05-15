@@ -35,29 +35,29 @@ const LoginScreen = ({ onLoginSuccess }) => {
           <div className="mb-6 text-center">
             <div className="w-20 h-20 mx-auto mb-2 bg-black rounded-full border-4 border-black"></div>
             <p className="text-xl font-bold">@devepy</p>
-          </div>
+        </div>
 
           {/* Description box */}
           <div className="mb-8 p-4 bg-[#E2FF5C] border-4 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <p className="text-lg">
-              In this space we seek to unite people who love
-              to share their knowledge with those who want to
-              learn and are open to receive valuable
+            In this space we seek to unite people who love
+            to share their knowledge with those who want to
+            learn and are open to receive valuable
               feedback. If you are looking to learn from those
-              who have already walked the path or if you are
-              passionate about guiding others in their
-              development, you have found your place.
-            </p>
-          </div>
+            who have already walked the path or if you are
+            passionate about guiding others in their
+            development, you have found your place.
+          </p>
+        </div>
 
-          {/* Join Now button */}
+        {/* Join Now button */}
           <Button 
             onClick={handleJoinNow}
             className="w-full py-6 text-xl font-bold bg-black text-white border-4 border-black rounded-lg hover:bg-[#E2FF5C] hover:text-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
           >
-            Join Now
+          Join Now
           </Button>
-        </div>
+      </div>
       </Card>
 
       {/* Bottom scrolling text */}

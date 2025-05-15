@@ -35,7 +35,7 @@ const ReviewsPage = () => {
 
       try {
         // Fetch reviews where the author is a Mentor (Role 0)
-        const mentorReviews = await publicClient.readContract({
+        const mentorReviews = await (publicClient.readContract as any)({
           address: contractMentorship,
           abi: contractMentorshipAbi,
           functionName: "getReviewsOf",
@@ -43,7 +43,7 @@ const ReviewsPage = () => {
         }) as any[];
 
         // Fetch reviews where the author is a Mentee (Role 1)
-        const menteeReviews = await publicClient.readContract({
+        const menteeReviews = await (publicClient.readContract as any)({
           address: contractMentorship,
           abi: contractMentorshipAbi,
           functionName: "getReviewsOf",
