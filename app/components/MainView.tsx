@@ -10,23 +10,23 @@ import { useRouter } from 'next/navigation';
 const MOCK_MENTORS = [
   {
     id: '1',
-    name: 'Juan Pérez',
+    username: 'Juan Pérez',
     expertise: ['Smart Contracts', 'Solidity', 'DeFi'],
-    experience: '5 años',
+    bio: '5 años de experiencia en contratos inteligentes y DeFi.',
     rating: 4.8
   },
   {
     id: '2',
-    name: 'María García',
+    username: 'María García',
     expertise: ['Frontend', 'React', 'Web3'],
-    experience: '3 años',
+    bio: '3 años ayudando a equipos a construir interfaces Web3.',
     rating: 4.9
   },
   {
     id: '3',
-    name: 'Carlos Rodríguez',
+    username: 'Carlos Rodríguez',
     expertise: ['NFTs', 'GameFi', 'Unity'],
-    experience: '4 años',
+    bio: '4 años desarrollando juegos blockchain y NFTs.',
     rating: 4.7
   }
 ];
