@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { ApprenticeCard } from '../components/ApprenticeCard';
 import { ChatPreview } from '../components/ChatPreview';
